@@ -1,26 +1,33 @@
 import './App.css';
 
+import { useState } from 'react';
+
 import { searchArtworks } from '../utils/api';
 import { SearchForm } from './SearchForm';
 import { Footer } from './Footer';
 
 export function App() {
-	function onSearchSubmit(query) {
-		// Search for the users's query.
-		// TODO: render the results, instead of logging them to the console.
-		// NOTE: `searchArtworks` currently returns local data, so that we
-		// don't make too many requests to the API! Once we've built out
-		// our UI, we need to make real requests!
-		// @see: ./src/uitls/api.js
-		searchArtworks(query).then((json) => {
-			console.log(json);
-		});
+	const [data, setData] = useState([]);
+
+	async function onSearchSubmit(query) {
+		const { data } = await searchArtworks(query);
+		setData(data);
 	}
 
 	return (
 		<div className="App">
 			<h1>TCL Career Lab Art Finder</h1>
 			<SearchForm onSearchSubmit={onSearchSubmit} />
+			<ul>
+				{data.map((artwork) => (
+					<li key={artwork.id}>
+						<a href={`#${artwork.id}`}>
+							{artwork.title} by {artwork.artist_title}
+						</a>
+					</li>
+				))}
+			</ul>
+
 			<Footer />
 		</div>
 	);
