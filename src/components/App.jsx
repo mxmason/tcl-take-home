@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { searchArtworks } from '../utils/api';
 import { SearchForm } from './SearchForm';
 import { Footer } from './Footer';
+import { ImageDetailsPage } from './ImageDetailsPage';
 
 export function App() {
 	const [data, setData] = useState([]);
@@ -15,8 +16,13 @@ export function App() {
 		setData(data);
 	}
 
-	function handleArtworkClick(id) {
-		setSelectedPiece(id);
+	function handleArtworkClick(id, event) {
+		setSelectedPiece(data.find((piece) => piece.id === id));
+		event.preventDefault();
+	}
+
+	function handleBackButtonClick() {
+		setSelectedPiece(null);
 	}
 
 	return (
@@ -30,7 +36,7 @@ export function App() {
 							<li key={artwork.id}>
 								<a
 									href={`#${artwork.id}`}
-									onClick={() => handleArtworkClick(artwork.id)}
+									onClick={(event) => handleArtworkClick(artwork.id, event)}
 								>
 									{artwork.title} by {artwork.artist_title}
 								</a>
@@ -39,7 +45,12 @@ export function App() {
 					</ul>
 				</>
 			)}
-			{selectedPiece !== null && <p>Hellaur {selectedPiece}</p>}
+			{selectedPiece !== null && (
+				<ImageDetailsPage
+					handleBackButtonClick={handleBackButtonClick}
+					selectedPiece={selectedPiece}
+				/>
+			)}
 
 			<Footer />
 		</div>
